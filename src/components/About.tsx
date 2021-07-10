@@ -8,7 +8,7 @@ class About extends React.Component<{}, {}>{
         console.log('render about');
         return(
             <div>
-                This is about
+                This is about 123456
             </div>
         );
 
