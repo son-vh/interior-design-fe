@@ -1,4 +1,7 @@
 import React from "react";
+import { Col, Container, Row } from "reactstrap";
+import ImageService from "../services/ImageService";
+import PeopleCard from "./PeopleCard";
 
 // import 'swiper/css/swiper.css';
 
@@ -12,7 +15,7 @@ type mstate = {
   activeIndex: number,
   currentIndex: number,
   animating: boolean,
-  items: Array<{ src: string, altText: string, caption: string }>
+  people: Array<{ id: number, url: string, name: string, company: string, description: string }>
 
 }
 
@@ -23,49 +26,97 @@ class Home extends React.Component<mProps, mstate>{
       activeIndex: 0,
       currentIndex: 0,
       animating: false,
-      items: [
-        {
-          src: 'https://mdbootstrap.com/img/new/slides/041.jpg',
-          altText: 'Slide 1',
-          caption: 'Slide 1'
-        },
-        {
-          src: 'https://mdbootstrap.com/img/new/slides/042.jpg',
-          altText: 'Slide 2',
-          caption: 'Slide 2'
-        },
-        {
-          src: 'https://mdbootstrap.com/img/new/slides/043.jpg',
-          altText: 'Slide 3',
-          caption: 'Slide 3'
-        }
-      ]
+      people: []
+      // people: [
+      //   {
+      //     id: 1,
+      //     name: "David Davidson",
+      //     url: "img/image_01.jpg",
+      //     company: "Some Company, Inc",
+      //     description: "Met at a party. Will connect with later"
+      //   },
+      //   {
+      //     id: 2,
+      //     name: "Mark Markson",
+      //     url: "img/image_02.png",
+      //     company: "Some Company, Inc",
+      //     description: "Met at a party. Will connect with later"
+      //   },
+      //   {
+      //     id: 3,
+      //     name: "Judy Judyson",
+      //     url: "img/image_03.jpg",
+      //     company: "Some Company, Inc",
+      //     description: "Met at a party. Will connect with later"
+      //   },
+      //   {
+      //     id: 4,
+      //     name: "James Jameson",
+      //     url: "img/image_04.jpg",
+      //     company: "Some Company, Inc",
+      //     description: "Met at a party. Will connect with later"
+      //   },
+      //   {
+      //     id: 5,
+      //     name: "Judy Judyson",
+      //     url: "img/image_03.jpg",
+      //     company: "Some Company, Inc",
+      //     description: "Met at a party. Will connect with later"
+      //   },
+      //   {
+      //     id: 6,
+      //     name: "David Davidson",
+      //     url: "img/image_01.jpg",
+      //     company: "Some Company, Inc",
+      //     description: "Met at a party. Will connect with later"
+      //   },
+      //   {
+      //     id: 7,
+      //     name: "Mark Markson",
+      //     url: "img/image_02.png",
+      //     company: "Some Company, Inc",
+      //     description: "Met at a party. Will connect with later"
+      //   },
+      //   {
+      //     id: 8,
+      //     name: "Judy Judyson",
+      //     url: "img/image_03.jpg",
+      //     company: "Some Company, Inc",
+      //     description: "Met at a party. Will connect with later"
+      //   },
+      // ]
+
     }
+    this.getImages = this.getImages.bind(this);
   }
 
+  getImages() {
+    ImageService.getImages().then((res) => {
+      console.log('res: ', res);
+      if (res != undefined) {
+        let peoples = Array<{ id: number, url: string, name: string, company: string, description: string }>();
+        res.data.data.map((item: any) => peoples.push({
+          "id": item.id,
+          "url": item.url,
+          "name": item.name,
+          "company": item.comany,
+          "description": item.description,
 
-  next = () => {
-    if (this.state.animating) return;
-    const nextIndex = this.state.activeIndex === this.state.items.length - 1 ? 0 : this.state.activeIndex + 1;
-    this.setState({
-      activeIndex: nextIndex
+        }));
+        this.setState({
+          people: peoples
+        });
+      }
     });
   }
-
-  previous = () => {
-    if (this.state.animating) return;
-    const nextIndex = this.state.activeIndex === 0 ? this.state.items.length - 1 : this.state.activeIndex - 1;
-    this.setState({
-      activeIndex: nextIndex
-    });
+  componentDidMount() {
+    console.log('componentDidMount')
+    this.getImages()
   }
 
-  goToIndex = (newIndex: number) => {
-    if (this.state.animating) return;
-    this.setState({
-      activeIndex: newIndex
-    });
-  }
+
+
+
 
   render() {
     console.log('render home');
@@ -129,7 +180,29 @@ class Home extends React.Component<mProps, mstate>{
           </button>
         </div>
 
-      </div>
+        <div className="container">
+          <span>
+            <h1>
+              DANH SÁCH ĐỒ NỘI THẤT
+            </h1>
+          </span>
+
+        </div>
+        <Container fluid>
+          <Row>
+            {
+              this.state.people.map(person => {
+                return (
+                  <Col sm="3">
+                    <PeopleCard person={person} />
+                  </Col>
+                )
+              })
+            }
+          </Row>
+        </Container>
+
+      </div >
     );
 
   }
